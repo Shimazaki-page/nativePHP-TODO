@@ -1,4 +1,15 @@
 <?php
+session_start();
+
+//セッション確認
+if (isset($_SESSION['errors'])) {
+    $errors = $_SESSION['errors'];
+    unset($_SESSION['errors']);
+} elseif (isset($_SESSION['success'])) {
+    $success = $_SESSION['success'];
+    unset($_SESSION['success']);
+}
+
 
 try {
     $user = "root";
@@ -7,15 +18,15 @@ try {
     //PDOオブジェクト生成
     $pdo = new PDO("mysql:host=db; dbname=keiziban; charset=utf8", $user, $password);
 
-    //PDOエラーの時に例外を投げるように設定
-//    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+//    PDOエラーの時に例外を投げるように設定
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $sql = "SELECT * FROM todo";
-
     $query = $pdo->query($sql);
 
-    if ($query) {
-        $rows = $query->fetchAll();
+    if (!empty($query)) {
+        $list = $query->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        $list = null;
     }
 
     $pdo = null;
@@ -37,17 +48,27 @@ try {
 <body>
 <header>TODOリスト</header>
 <div class="todo">
+    <!--    フラッシュメッセージ-->
+    <?php if (isset($errors)): ?>
+        <?php foreach ($errors as $error): ?>
+            <div class="todo__flash-error"><?php echo $error ?></div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    <?php if (isset($success)): ?>
+        <div class="todo__flash-success"><?php echo $success ?></div>
+    <?php endif; ?>
+
     <h1 class="todo__top-title">これからやることは・・・</h1>
     <?php if (empty($list)): ?>
         <p class="todo__no-card-text">とくにない・・・</p>
     <?php else: ?>
         <?php foreach ($list as $item): ?>
             <div class="todo__card">
-                <p class="todo__card-text"><?php echo $item->text ?></p>
+                <p class="todo__card-text"><?php echo $item['text'] ?></p>
                 <div class="todo__card-footer">
-                    <p class="todo__card-name"><?php echo $item->name ?></p>
+                    <p class="todo__card-name"><?php echo $item['name'] ?></p>
                     <form class="todo__card-delete-form" method="post" action="delete.php">
-                        <input type="hidden" name="id" value="<?php echo $item->id ?>">
+                        <input type="hidden" name="id" value="<?php echo $item['id'] ?>">
                         <input class="todo__delete-button" type="submit" value="削除">
                     </form>
                 </div>
