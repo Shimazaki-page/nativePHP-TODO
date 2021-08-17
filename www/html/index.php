@@ -10,12 +10,6 @@ if (isset($_SESSION['errors'])) {
     unset($_SESSION['success']);
 }
 
-//csrf対策としてトークン生成
-$token = bin2hex(random_bytes(32));
-$_SESSION['csrf_token'] = $token;
-var_dump($token);
-var_dump($_SESSION['csrf_token']);
-
 try {
     $user = "root";
     $password = "secret";
