@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 //フォームのバリデーションチェック
 if (isset($_POST)) {
     $errors = validate($_POST);
@@ -12,7 +13,7 @@ if (isset($_POST)) {
 }
 
 //バリデーションメソッド
-function validate($post)
+function validate($post) 
 {
     $errors = array();
 
@@ -29,8 +30,9 @@ function validate($post)
     return $errors;
 }
 
-try {
 
+
+try {
     $user = "root";
     $password = "secret";
     $pdo = new PDO("mysql:host=db; dbname=keiziban; charset=utf8", $user, $password);
@@ -52,5 +54,6 @@ try {
     $pdo = null;
 
 } catch (PDOException $e) {
-    $e->getMessage();
+    header('Content-Type: text/plain; charset=UTF-8', true, 500);
+    exit($e->getMessage());
 }

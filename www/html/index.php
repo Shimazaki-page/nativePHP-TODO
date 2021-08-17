@@ -20,6 +20,7 @@ try {
 
 //    PDOエラーの時に例外を投げるように設定
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $sql = "SELECT * FROM todo";
     $query = $pdo->query($sql);
 
@@ -32,7 +33,8 @@ try {
     $pdo = null;
 
 } catch (PDOException $e) {
-    echo $e->getMessage();
+    header('Content-Type: text/plain; charset=UTF-8', true, 500);
+    exit($e->getMessage());
 }
 ?>
 
@@ -69,6 +71,7 @@ try {
                     <p class="todo__card-name"><?php echo $item['name'] ?></p>
                     <form class="todo__card-delete-form" method="post" action="delete.php">
                         <input type="hidden" name="id" value="<?php echo $item['id'] ?>">
+                        <input type="hidden" name="token" value="<?php echo $token ?>">
                         <input class="todo__delete-button" type="submit" value="削除">
                     </form>
                 </div>
@@ -85,6 +88,7 @@ try {
             <label for="name">なまえ</label>
             <input type="text" id="name" name="name">
         </div>
+        <input type="hidden" name="token" value="<?php echo $token ?>">
         <input class="todo__add-button" type="submit" value="追加">
     </form>
 </div>
