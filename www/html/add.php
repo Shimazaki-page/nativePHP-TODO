@@ -30,6 +30,19 @@ function validate($post)
     return $errors;
 }
 
+//csrf対策としてトークン確認
+$post_token = $_POST['token'];
+$session_token = $_SESSION['csrf_token'];
+
+if (empty($post_token) || $post_token !== $session_token) {
+    var_dump($post_token);
+    var_dump($session_token);
+    unset($_SESSION['csrf_token']);
+    header('Content-Type: text/plain; charset=UTF-8', true, 400);
+    exit('不正なリクエストです。');
+} else {
+    unset($_SESSION['csrf_token']);
+}
 
 try {
     $user = "root";
