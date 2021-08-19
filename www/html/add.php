@@ -10,10 +10,13 @@ if (isset($_POST)) {
         header('Location:./index.php');
         exit();
     }
+} else {
+    header('Content-Type: text/plain; charset=UTF-8', true, 400);
+    exit('不正なリクエストです。');
 }
 
 //バリデーションメソッド
-function validate($post) 
+function validate($post)
 {
     $errors = array();
 
@@ -35,8 +38,6 @@ $post_token = $_POST['token'];
 $session_token = $_SESSION['csrf_token'];
 
 if (empty($post_token) || $post_token !== $session_token) {
-    var_dump($post_token);
-    var_dump($session_token);
     unset($_SESSION['csrf_token']);
     header('Content-Type: text/plain; charset=UTF-8', true, 400);
     exit('不正なリクエストです。');
@@ -49,6 +50,9 @@ try {
     $password = "secret";
     $pdo = new PDO("mysql:host=db; dbname=keiziban; charset=utf8", $user, $password);
 
+//    PDOエラーの時に例外を投げるように設定
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     //XSS対策としてhtmlspecialcharsを使う
     $text = htmlspecialchars($_POST['text']);
     $name = htmlspecialchars($_POST['name']);
@@ -59,12 +63,10 @@ try {
     $stmt->bindValue(':text', $text, PDO::PARAM_STR);
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->execute();
+    $pdo = null;
 
     $_SESSION['success'] = "投稿できました！";
     header('Location:./index.php');
-
-    $pdo = null;
-
 } catch (PDOException $e) {
     header('Content-Type: text/plain; charset=UTF-8', true, 500);
     exit($e->getMessage());
