@@ -1,4 +1,6 @@
 <?php
+require_once 'function.php';
+
 session_start();
 
 //フォームのバリデーションチェック
@@ -54,8 +56,8 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     //XSS対策としてhtmlspecialcharsを使う
-    $text = htmlspecialchars($_POST['text']);
-    $name = htmlspecialchars($_POST['name']);
+    $text = e($_POST['text']);
+    $name = e($_POST['name']);
 
     //プリペアドステートメントを使いSQLインジェクション対策を行う
     $sql = "INSERT INTO todo (name, text, created_at) VALUES (:name, :text, now())";
