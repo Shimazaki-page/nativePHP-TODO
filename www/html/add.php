@@ -48,9 +48,7 @@ if (empty($post_token) || $post_token !== $session_token) {
 }
 
 try {
-    $user = "root";
-    $password = "secret";
-    $pdo = new PDO("mysql:host=db; dbname=keiziban; charset=utf8", $user, $password);
+    $pdo=getDatabase();
 
 //    PDOエラーの時に例外を投げるように設定
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

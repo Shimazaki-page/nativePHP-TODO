@@ -1,4 +1,5 @@
 <?php
+require_once 'function.php';
 session_start();
 
 //セッション確認
@@ -19,11 +20,7 @@ if (!isset($_SESSION['csrf_token'])) {
 }
 
 try {
-    $user = "root";
-    $password = "secret";
-
-    //PDOオブジェクト生成
-    $pdo = new PDO("mysql:host=db; dbname=keiziban; charset=utf8", $user, $password);
+    $pdo=getDatabase();
 
 //    PDOエラーの時に例外を投げるように設定
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
